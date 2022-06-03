@@ -112,8 +112,34 @@ public class UserController extends HttpServlet {
 			//request 의 attribute 에 userVo 는 넣어서 포워딩
 			request.setAttribute("userVo", userVo);
 			WebUtil.forword(request, response, "/WEB-INF/views/user/modifyForm.jsp");
-		}
 		
+		}else if("modify".equals(action)) { //수정
+			System.out.println("UserController>modify");
+			
+			//세션에서 no
+			HttpSession session = request.getSession();
+			UserVo authUser = (UserVo)session.getAttribute("authUser");
+			int no = authUser.getNo();
+			
+			//파라미터꺼낸다
+			String password = request.getParameter("password");
+			String name = request.getParameter("name");
+			String gender = request.getParameter("gender");
+			
+			//묶어준다
+			UserVo userVo = new UserVo();
+			userVo.setNo(no);
+			userVo.setPassword(password);
+			userVo.setName(name);
+			userVo.setGender(gender);
+			
+			//dao를 사용한다
+			UserDao userDao = new UserDao();
+			int count = userDao.update(userVo);
+			
+			//리다이렉트(main)
+			WebUtil.redirect(request, response, "/mysite2/main");
+		}
 		
 	}
 
